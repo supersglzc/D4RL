@@ -22,9 +22,14 @@ import math
 import numpy as np
 import gym
 from copy import deepcopy
+from d4rl.locomotion import mujoco_goal_env
 
 RESET = R = 'r'  # Reset position.
 GOAL = G = 'g'
+
+GYM_ASSETS_DIR = os.path.join(
+    os.path.dirname(mujoco_goal_env.__file__),
+    'assets')
 
 # Maze specifications for dataset generation
 U_MAZE = [[1, 1, 1, 1, 1],
@@ -54,9 +59,9 @@ HARDEST_MAZE = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
 # Maze specifications with a single target goal
 U_MAZE_TEST = [[1, 1, 1, 1, 1],
-              [1, R, 0, 0, 1],
-              [1, 1, 1, 0, 1],
-              [1, G, 0, 0, 1],
+              [1, 0, 0, 0, 1],
+              [1, G, 1, R, 1],
+              [1, 0, 0, 0, 1],
               [1, 1, 1, 1, 1]]
 
 BIG_MAZE_TEST = [[1, 1, 1, 1, 1, 1, 1, 1],
@@ -149,7 +154,6 @@ class MazeEnv(gym.Env):
     xml_path = self.LOCOMOTION_ENV.FILE
     tree = ET.parse(xml_path)
     worldbody = tree.find(".//worldbody")
-
     self._maze_map = maze_map
 
     self._maze_height = maze_height
@@ -157,6 +161,9 @@ class MazeEnv(gym.Env):
     self._manual_collision = manual_collision
 
     self._maze_map = maze_map
+    
+    with open(os.path.join(GYM_ASSETS_DIR, 'reward_map.npy'), 'rb') as f:
+      self._reward_map = np.load(f)
 
     # Obtain a numpy array form for a maze map in case we want to reset
     # to multiple starting states
@@ -194,7 +201,9 @@ class MazeEnv(gym.Env):
               conaffinity="1",
               rgba="0.7 0.5 0.3 1.0",
           )
-
+    self.target_goal = self.goal_sampler(np.random)
+    worldbody[3].attrib['pos'] = "-8 0 0"
+    
     torso = tree.find(".//body[@name='torso']")
     geoms = torso.findall(".//geom")
 
@@ -203,7 +212,7 @@ class MazeEnv(gym.Env):
 
     self.LOCOMOTION_ENV.__init__(self, *args, file_path=file_path, non_zero_reset=non_zero_reset, reward_type=reward_type, **kwargs)
 
-    self.target_goal = None
+    # self.target_goal = None
 
   def _xy_to_rowcol(self, xy):
     size_scaling = self._maze_size_scaling
@@ -217,7 +226,6 @@ class MazeEnv(gym.Env):
     row_sample = np.random.choice(np.arange(self._np_maze_map.shape[0]), p=prob_row)
     col_sample = np.random.choice(np.arange(self._np_maze_map.shape[1]), p=prob[row_sample] * 1.0 / prob_row[row_sample])
     reset_location = self._rowcol_to_xy((row_sample, col_sample))
-    
     # Add some random noise
     random_x = np.random.uniform(low=0, high=0.5) * 0.5 * self._maze_size_scaling
     random_y = np.random.uniform(low=0, high=0.5) * 0.5 * self._maze_size_scaling
@@ -248,14 +256,12 @@ class MazeEnv(gym.Env):
     # be a goal.
     sample_choices = goal_cells if goal_cells else valid_cells
     cell = sample_choices[np_random.choice(len(sample_choices))]
-    xy = self._rowcol_to_xy(cell, add_random_noise=True)
+    xy = self._rowcol_to_xy(cell, add_random_noise=False)
+    # random_x = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
+    # random_y = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
 
-    random_x = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
-    random_y = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
-
-    xy = (max(xy[0] + random_x, 0), max(xy[1] + random_y, 0))
-
-    return xy
+    xy = (max(xy[0], 0), max(xy[1], 0))
+    return (-8, 0)
   
   def set_target_goal(self, goal_input=None):
     if goal_input is None:
@@ -263,7 +269,7 @@ class MazeEnv(gym.Env):
     else:
       self.target_goal = goal_input
     
-    print ('Target Goal: ', self.target_goal)
+    # print ('Target Goal: ', self.target_goal)
     ## Make sure that the goal used in self._goal is also reset:
     self._goal = self.target_goal
 

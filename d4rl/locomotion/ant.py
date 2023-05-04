@@ -35,7 +35,8 @@ GYM_ASSETS_DIR = os.path.join(
 
 class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
   """Basic ant locomotion environment."""
-  FILE = os.path.join(GYM_ASSETS_DIR, 'ant.xml')
+  # FILE = os.path.join(GYM_ASSETS_DIR, 'ant.xml')
+  FILE = os.path.join(GYM_ASSETS_DIR, 'low_gear_ant.xml')
 
   def __init__(self, file_path=None, expose_all_qpos=False,
                expose_body_coms=None, expose_body_comvels=None, non_zero_reset=False):
@@ -52,6 +53,8 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     mujoco_env.MujocoEnv.__init__(self, file_path, 5)
     utils.EzPickle.__init__(self)
+    
+    # self.init_qpos[:3] = np.asarray([7.8, 3.6, 0.75])
 
   @property
   def physics(self):
@@ -118,9 +121,8 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     return obs
 
   def reset_model(self):
-    qpos = self.init_qpos + self.np_random.uniform(
-        size=self.model.nq, low=-.1, high=.1)
-    qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .1
+    qpos = self.init_qpos # + self.np_random.uniform(size=self.model.nq, low=-.1, high=.1)
+    qvel = self.init_qvel # + self.np_random.randn(self.model.nv) * .1
 
     if self._non_zero_reset:
       """Now the reset is supposed to be to a non-zero location"""
@@ -134,7 +136,12 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     return self._get_obs()
 
   def viewer_setup(self):
-    self.viewer.cam.distance = self.model.stat.extent * 0.5
+    self.viewer.cam.distance = self.model.stat.extent * 1.5
+    self.viewer.cam.elevation = -90
+    self.viewer.cam.trackbodyid = -1
+    # self.viewer.cam.lookat[0] += 0.5
+    # self.viewer.cam.lookat[1] += 0.5
+    # print(self.viewer.cam.lookat[3])
 
   def get_xy(self):
     return self.physics.data.qpos[:2]

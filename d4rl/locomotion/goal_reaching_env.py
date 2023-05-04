@@ -33,11 +33,23 @@ class GoalReachingEnv(object):
       return obs
     else:
       return base_obs
+    
+  def get_reward(self):
+    START = (2, 3)
+    resolution = 60
+    scale = resolution // len(self._maze_map)
+    START = (START[0] * scale + scale // 2, START[1] * scale + scale // 2)
+    new_scale = self._maze_size_scaling / scale
+    new_X = int(START[0] + self.get_xy()[1] / new_scale)
+    new_Y = int(START[1] + self.get_xy()[0] / new_scale)
+    reward = self._reward_map[new_X][new_Y]
+    return reward
 
   def step(self, a):
     self.BASE_ENV.step(self, a)
     if self.reward_type == 'dense':
-      reward = -np.linalg.norm(self.target_goal - self.get_xy())
+      # reward = 1/np.linalg.norm(self.target_goal - self.get_xy())
+      reward = 0.01 * self.get_reward()
     elif self.reward_type == 'sparse':
       reward = 1.0 if np.linalg.norm(self.get_xy() - self.target_goal) <= 0.5 else 0.0
     
@@ -45,9 +57,10 @@ class GoalReachingEnv(object):
     # Terminate episode when we reach a goal
     if self.eval and np.linalg.norm(self.get_xy() - self.target_goal) <= 0.5:
       done = True
+      reward += 10
 
     obs = self._get_obs()
-    return obs, reward, done, {}
+    return obs, reward, done, {'success': done}
 
   def reset_model(self):
     if self.target_goal is not None or self.eval:

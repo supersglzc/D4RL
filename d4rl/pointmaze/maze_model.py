@@ -77,7 +77,7 @@ def point_maze(maze_str):
 
     actuator = mjcmodel.root.actuator()
     actuator.motor(joint="ball_x", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
-    actuator.motor(joint="ball_y", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
+    # actuator.motor(joint="ball_y", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
 
     return mjcmodel
 
@@ -146,11 +146,13 @@ U_MAZE_EVAL = \
         "#####"
 
 OPEN = \
-        "#######\\"+\
-        "#OOOOO#\\"+\
-        "#OOGOO#\\"+\
-        "#OOOOO#\\"+\
-        "#######"
+        "#########\\"+\
+        "#OOOGOOO#\\"+\
+        "#OOOOOOO#\\"+\
+        "#OOOOOOO#\\"+\
+        "#OOOOOOO#\\"+\
+        "#OOOOOOO#\\"+\
+        "#########"
 
 
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
@@ -186,11 +188,12 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
             # If no goal, use the first empty tile
             self.set_target(np.array(self.reset_locations[0]).astype(self.observation_space.dtype))
         self.empty_and_goal_locations = self.reset_locations + self.goal_locations
-
+        
     def step(self, action):
         action = np.clip(action, -1.0, 1.0)
         self.clip_velocity()
         self.do_simulation(action, self.frame_skip)
+        # self.sim.data.qpos += action
         self.set_marker()
         ob = self._get_obs()
         if self.reward_type == 'sparse':
@@ -226,6 +229,7 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         idx = self.np_random.choice(len(self.empty_and_goal_locations))
         reset_location = np.array(self.empty_and_goal_locations[idx]).astype(self.observation_space.dtype)
         qpos = reset_location + self.np_random.uniform(low=-.1, high=.1, size=self.model.nq)
+        # qpos = np.array((3, 4)).astype(self.observation_space.dtype)
         qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .1
         self.set_state(qpos, qvel)
         if self.reset_target:
