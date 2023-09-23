@@ -187,7 +187,7 @@ U_MAZE_TEST = [[1, 1, 1, 1, 1],
 # print(reset)
 import time
 start = time.time()
-reward_map = generate_reward_map(U_MAZE_TEST, resolution=60)
+reward_map = generate_reward_map(U_MAZE_TEST, resolution=65)
 with open('/data/pulkitag/misc/steven/D4RL/reward_map.npy', 'wb') as f:
   np.save(f, reward_map)
 # path = dijkstra([51,70],goal,obstacles)
