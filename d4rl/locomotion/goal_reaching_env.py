@@ -58,8 +58,8 @@ class GoalReachingEnv(object):
     # Terminate episode when we reach a goal
     if self.eval and np.linalg.norm(self.get_xy() - self.target_goal) <= 0.5:
       done = True
-      reward += 10
-
+      # reward += 10
+    
     obs = self._get_obs()
     return obs, reward, done, {'success': done}
 
