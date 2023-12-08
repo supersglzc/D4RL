@@ -58,11 +58,63 @@ HARDEST_MAZE = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 # Maze specifications with a single target goal
+MAZE_v1 = [[1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 1],
+            [1, G, 1, R, 1],
+            [1, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1]]
+
+MAZE_v2 = [[1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, G, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1],
+            [1, G, 0, R, 0, G, 1],
+            [1, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, G, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1]]
+
+MAZE_v2_hard = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, G, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, G, 1, 0, R, 0, 1, G, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, G, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+MAZE_v3 = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 1, G, 1],
+            [1, 0, 1, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, R, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 0, 0, 1, 0, 1],
+            [1, G, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+MAZE_v4 = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 1, 1, 0, 1],
+            [1, 1, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1, 0, 1],
+            [1, G, 1, 1, 0, 1, 1, R, 1],
+            [1, 0, 1, 1, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+MAZE_v5 = [[1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 1],
+            [1, G, 1, 0, 0, R, 1],
+            [1, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1]]
+
 U_MAZE_TEST = [[1, 1, 1, 1, 1],
-              [1, 0, 0, 0, 1],
-              [1, G, 1, R, 1],
-              [1, 0, 0, 0, 1],
-              [1, 1, 1, 1, 1]]
+            [1, 0, 0, 0, 1],
+            [1, G, 1, R, 1],
+            [1, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1]]
 
 BIG_MAZE_TEST = [[1, 1, 1, 1, 1, 1, 1, 1],
                 [1, R, 0, 1, 1, 0, 0, 1],
@@ -152,6 +204,9 @@ class MazeEnv(gym.Env):
       raise ValueError('LOCOMOTION_ENV is unspecified.')
 
     xml_path = self.LOCOMOTION_ENV.FILE
+    multi_goal_map = [MAZE_v2, MAZE_v2_hard, MAZE_v3]
+    if maze_map in multi_goal_map:
+        xml_path = os.path.join(GYM_ASSETS_DIR, 'low_gear_ant_4g.xml')
     tree = ET.parse(xml_path)
     worldbody = tree.find(".//worldbody")
     self._maze_map = maze_map
@@ -201,8 +256,29 @@ class MazeEnv(gym.Env):
               conaffinity="1",
               rgba="0.7 0.5 0.3 1.0",
           )
+
     self.target_goal = self.goal_sampler(np.random)
-    worldbody[3].attrib['pos'] = "-8 0 0"
+    if self._maze_map == MAZE_v1:
+        worldbody[3].attrib['pos'] = "-8 0 0"
+    elif self._maze_map == MAZE_v2:
+        worldbody[3].attrib['pos'] = "-8 0 0"
+        worldbody[4].attrib['pos'] = "8 0 0"
+        worldbody[5].attrib['pos'] = "0 8 0"
+        worldbody[6].attrib['pos'] = "0 -8 0"
+    elif self._maze_map == MAZE_v2_hard:
+        worldbody[3].attrib['pos'] = "-12 0 0"
+        worldbody[4].attrib['pos'] = "12 0 0"
+        worldbody[5].attrib['pos'] = "0 12 0"
+        worldbody[6].attrib['pos'] = "0 -12 0"
+    elif self._maze_map == MAZE_v3:
+        worldbody[3].attrib['pos'] = "-12 12 0"
+        worldbody[4].attrib['pos'] = "12 -12 0"
+    elif self._maze_map == MAZE_v4:
+        worldbody[3].attrib['pos'] = "-24 0 0"
+    elif self._maze_map == MAZE_v5:
+        worldbody[3].attrib['pos'] = "-16 0 0"
+    else:
+        NotImplementedError
     
     torso = tree.find(".//body[@name='torso']")
     geoms = torso.findall(".//geom")
@@ -256,12 +332,26 @@ class MazeEnv(gym.Env):
     # be a goal.
     sample_choices = goal_cells if goal_cells else valid_cells
     cell = sample_choices[np_random.choice(len(sample_choices))]
-    xy = self._rowcol_to_xy(cell, add_random_noise=False)
-    # random_x = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
-    # random_y = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
+    xy = self._rowcol_to_xy(cell, add_random_noise=True)
+    random_x = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
+    random_y = np.random.uniform(low=0, high=0.5) * 0.25 * self._maze_size_scaling
 
     xy = (max(xy[0], 0), max(xy[1], 0))
-    return (-8, 0)
+
+    if self._maze_map == MAZE_v1:
+        return (-8, 0)
+    elif self._maze_map == MAZE_v2:
+        return [(-8, 0), (8, 0), (0, 8), (0, -8)]
+    elif self._maze_map == MAZE_v2_hard:
+        return [(-12, 0), (12, 0), (0, 12), (0, -12)]
+    elif self._maze_map == MAZE_v3:
+        return [(-12, 12), (12, -12)]
+    elif self._maze_map == MAZE_v4:
+        return (-24, 0)
+    elif self._maze_map == MAZE_v5:
+        return (-16, 0)
+    else:
+        return xy
   
   def set_target_goal(self, goal_input=None):
     if goal_input is None:
