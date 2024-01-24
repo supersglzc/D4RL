@@ -50,7 +50,7 @@ class GoalReachingEnv(object):
       if isinstance(self.target_goal, list):
         for goal in range(len(self.target_goal)):
           if np.linalg.norm(self.get_xy() - self.target_goal[goal]) <= 0.5:
-            return True, goal
+            return True, goal + 1
       else:
         if np.linalg.norm(self.get_xy() - self.target_goal) <= 0.5:
           return True, 1
@@ -64,7 +64,7 @@ class GoalReachingEnv(object):
       # reward = 1/np.linalg.norm(self.target_goal - self.get_xy())
       reward = 0.001 * self.get_reward()
     elif self.reward_type == 'sparse':
-      reward = 1.0 if check else 0.0
+      reward = 10.0 if check else 0.0
     
     done = False
     # Terminate episode when we reach a goal

@@ -23,7 +23,7 @@ register(
 register(
     id='antmaze-v1',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=700,
+    max_episode_steps=500,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v1,
@@ -40,7 +40,7 @@ register(
 register(
     id='antmaze-v2',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=700,
+    max_episode_steps=500,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v2,
@@ -57,7 +57,7 @@ register(
 register(
     id='antmaze-v2-hard',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=700,
+    max_episode_steps=500,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v2_hard,
@@ -91,7 +91,7 @@ register(
 register(
     id='antmaze-v4',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=700,
+    max_episode_steps=1000,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v4,
@@ -108,7 +108,7 @@ register(
 register(
     id='antmaze-v5',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=700,
+    max_episode_steps=1000,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v5,
