@@ -121,7 +121,9 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     return obs
 
   def reset_model(self):
-    qpos = self.init_qpos # + self.np_random.uniform(size=self.model.nq, low=-.1, high=.1)
+    # if randomized pos
+    qpos = self.init_qpos 
+    # qpos[:2] = self.np_random.uniform(size=2, low=-2, high=2)
     qvel = self.init_qvel # + self.np_random.randn(self.model.nv) * .1
 
     if self._non_zero_reset:
