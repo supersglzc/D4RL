@@ -34,6 +34,7 @@ register(
         'maze_size_scaling': 4.0,
         'ref_min_score': 0.0,
         'ref_max_score': 1.0,
+        'random_init': False,
     }
 )
 
@@ -51,6 +52,7 @@ register(
         'maze_size_scaling': 4.0,
         'ref_min_score': 0.0,
         'ref_max_score': 1.0,
+        'random_init': False,
     }
 )
 
@@ -68,6 +70,7 @@ register(
         'maze_size_scaling': 4.0,
         'ref_min_score': 0.0,
         'ref_max_score': 1.0,
+        'random_init': False,
     }
 )
 
@@ -85,6 +88,7 @@ register(
         'maze_size_scaling': 4.0,
         'ref_min_score': 0.0,
         'ref_max_score': 1.0,
+        'random_init': False,
     }
 )
 
@@ -102,6 +106,7 @@ register(
         'maze_size_scaling': 4.0,
         'ref_min_score': 0.0,
         'ref_max_score': 1.0,
+        'random_init': False,
     }
 )
 
@@ -119,6 +124,7 @@ register(
         'maze_size_scaling': 4.0,
         'ref_min_score': 0.0,
         'ref_max_score': 1.0,
+        'random_init': False,
     }
 )
 

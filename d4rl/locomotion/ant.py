@@ -39,7 +39,7 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
   FILE = os.path.join(GYM_ASSETS_DIR, 'low_gear_ant.xml')
 
   def __init__(self, file_path=None, expose_all_qpos=False,
-               expose_body_coms=None, expose_body_comvels=None, non_zero_reset=False):
+               expose_body_coms=None, expose_body_comvels=None, non_zero_reset=False, random_init=False):
     if file_path is None:
       file_path = self.FILE
 
@@ -50,6 +50,7 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     self._body_comvel_indices = {}
 
     self._non_zero_reset = non_zero_reset
+    self.random_init = random_init
 
     mujoco_env.MujocoEnv.__init__(self, file_path, 5)
     utils.EzPickle.__init__(self)
@@ -122,8 +123,10 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
   def reset_model(self):
     # if randomized pos
-    qpos = self.init_qpos 
-    # qpos[:2] = self.np_random.uniform(size=2, low=-2, high=2)
+    qpos = self.init_qpos
+    if self.random_init:
+      qpos[:2] = self.np_random.uniform(size=2, low=-2, high=2)
+    print(qpos[:2])
     qvel = self.init_qvel # + self.np_random.randn(self.model.nv) * .1
 
     if self._non_zero_reset:
@@ -169,7 +172,8 @@ class GoalReachingAntEnv(goal_reaching_env.GoalReachingEnv, AntEnv):
                     expose_all_qpos=expose_all_qpos,
                     expose_body_coms=None,
                     expose_body_comvels=None,
-                    non_zero_reset=non_zero_reset)
+                    non_zero_reset=non_zero_reset,
+                    random_init=kwargs['random_init'])
 
 class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
   """Ant navigating a maze."""
