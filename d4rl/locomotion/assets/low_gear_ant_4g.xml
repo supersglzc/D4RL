@@ -71,7 +71,7 @@
     <site name="target1" pos="0 0 0" size="0.5" material='target'/>
     <site name="target2" pos="0 0 0" size="0.5" material='target'/>
     <site name="target3" pos="0 0 0" size="0.5" material='target'/>
-    <site name="target4" pos="0 0 0" size="0.5" material='target'/>
+    <!-- <site name="target4" pos="0 0 0" size="0.5" material='target'/> -->
 
   </worldbody>
   <actuator>

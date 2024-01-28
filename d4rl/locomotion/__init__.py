@@ -95,7 +95,7 @@ register(
 register(
     id='antmaze-v4',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=1000,
+    max_episode_steps=700,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v4,
@@ -113,7 +113,7 @@ register(
 register(
     id='antmaze-v5',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=1000,
+    max_episode_steps=700,
     kwargs={
         'deprecated': True,
         'maze_map': maze_env.MAZE_v5,

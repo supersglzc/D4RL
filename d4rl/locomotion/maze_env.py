@@ -64,12 +64,20 @@ MAZE_v1 = [[1, 1, 1, 1, 1],
             [1, 0, 0, 0, 1],
             [1, 1, 1, 1, 1]]
 
+# MAZE_v2 = [[1, 1, 1, 1, 1, 1, 1],
+#             [1, 0, 0, G, 0, 0, 1],
+#             [1, 0, 0, 0, 0, 0, 1],
+#             [1, G, 0, R, 0, G, 1],
+#             [1, 0, 0, 0, 0, 0, 1],
+#             [1, 0, 0, G, 0, 0, 1],
+#             [1, 1, 1, 1, 1, 1, 1]]
+
 MAZE_v2 = [[1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, G, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1],
-            [1, G, 0, R, 0, G, 1],
-            [1, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, G, 0, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 0, R, 0, G, 1],
+            [1, 0, 1, 1, 1, 0, 1],
+            [1, G, 1, 1, 1, 0, 1],
             [1, 1, 1, 1, 1, 1, 1]]
 
 MAZE_v2_hard = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -92,15 +100,13 @@ MAZE_v3 = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, G, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-MAZE_v4 = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 1, 1, 0, 1],
-            [1, 1, 0, 1, 0, 0, 0, 0, 1],
-            [1, 0, 0, 1, 0, 0, 1, 0, 1],
-            [1, G, 1, 1, 0, 1, 1, R, 1],
-            [1, 0, 1, 1, 0, 0, 0, 0, 1],
-            [1, 0, 1, 1, 0, 1, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1]]
+MAZE_v4 = [[1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 1],
+            [1, G, 1, 0, 1, R, 1],
+            [1, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1]]
 
 MAZE_v5 = [[1, 1, 1, 1, 1, 1, 1],
             [1, 0, 1, 0, 0, 0, 1],
@@ -261,10 +267,10 @@ class MazeEnv(gym.Env):
     if self._maze_map == MAZE_v1:
         worldbody[3].attrib['pos'] = "-8 0 0"
     elif self._maze_map == MAZE_v2:
-        worldbody[3].attrib['pos'] = "-8 0 0"
+        worldbody[3].attrib['pos'] = "-8 -8 0"
         worldbody[4].attrib['pos'] = "8 0 0"
-        worldbody[5].attrib['pos'] = "0 8 0"
-        worldbody[6].attrib['pos'] = "0 -8 0"
+        worldbody[5].attrib['pos'] = "-8 8 0"
+        # worldbody[6].attrib['pos'] = "0 -8 0"
     elif self._maze_map == MAZE_v2_hard:
         worldbody[3].attrib['pos'] = "-12 0 0"
         worldbody[4].attrib['pos'] = "12 0 0"
@@ -274,7 +280,7 @@ class MazeEnv(gym.Env):
         worldbody[3].attrib['pos'] = "-12 12 0"
         worldbody[4].attrib['pos'] = "12 -12 0"
     elif self._maze_map == MAZE_v4:
-        worldbody[3].attrib['pos'] = "-24 0 0"
+        worldbody[3].attrib['pos'] = "-16 0 0"
     elif self._maze_map == MAZE_v5:
         worldbody[3].attrib['pos'] = "-16 0 0"
     else:
@@ -341,13 +347,13 @@ class MazeEnv(gym.Env):
     if self._maze_map == MAZE_v1:
         return (-8, 0)
     elif self._maze_map == MAZE_v2:
-        return [(-8, 0), (8, 0), (0, 8), (0, -8)]
+        return [(-8, 8), (8, 0), (-8, 8)] # , (0, 8), (0, -8)]
     elif self._maze_map == MAZE_v2_hard:
         return [(-12, 0), (12, 0), (0, 12), (0, -12)]
     elif self._maze_map == MAZE_v3:
         return [(-12, 12), (12, -12)]
     elif self._maze_map == MAZE_v4:
-        return (-24, 0)
+        return (-16, 0)
     elif self._maze_map == MAZE_v5:
         return (-16, 0)
     else:
