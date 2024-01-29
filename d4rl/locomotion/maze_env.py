@@ -269,7 +269,7 @@ class MazeEnv(gym.Env):
     elif self._maze_map == MAZE_v2:
         worldbody[3].attrib['pos'] = "-8 -8 0"
         worldbody[4].attrib['pos'] = "8 0 0"
-        worldbody[5].attrib['pos'] = "-8 8 0"
+        # worldbody[5].attrib['pos'] = "-8 8 0"
         # worldbody[6].attrib['pos'] = "0 -8 0"
     elif self._maze_map == MAZE_v2_hard:
         worldbody[3].attrib['pos'] = "-12 0 0"
@@ -347,7 +347,7 @@ class MazeEnv(gym.Env):
     if self._maze_map == MAZE_v1:
         return (-8, 0)
     elif self._maze_map == MAZE_v2:
-        return [(-8, 8), (8, 0), (-8, 8)] # , (0, 8), (0, -8)]
+        return [(-8, 8), (8, 0)] # , (0, 8), (0, -8)]
     elif self._maze_map == MAZE_v2_hard:
         return [(-12, 0), (12, 0), (0, 12), (0, -12)]
     elif self._maze_map == MAZE_v3:
